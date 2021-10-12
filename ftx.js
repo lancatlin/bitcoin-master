@@ -2,8 +2,6 @@ const axios = require("axios")
 const config = require("./config.json")
 const { createHmac } = require("crypto")
 
-console.log(config)
-
 const api = axios.create({
   baseURL: "https://ftx.com",
 })
@@ -12,7 +10,8 @@ const hmac = createHmac("sha256", config.api_secret)
 
 api.interceptors.request.use(function (req) {
   const ts = Date.now()
-  const body = `${ts}${req.method.toUpperCase()}${req.url}${req.body? req.body : ""}`
+  const body = `${ts}${req.method.toUpperCase()}${req.url}${req.data? JSON.stringify(req.data): ""}`
+  console.log(body)
   hmac.update(body)
   req.headers["FTX-KEY"] = config.api_key
   req.headers["FTX-TS"] = String(ts)
@@ -27,7 +26,18 @@ async function balances() {
   return res.data.result
 }
 
-balances()
+async function placeOrder(market, size) {
+  const res = await api.post("/api/orders", {
+    market,
+    side: 'buy',
+    price: null,
+    type: 'market', 
+    size,
+  })
+  return res.data
+}
+
+placeOrder('BTC/USD', 10)
   .then((result) => {
     console.log(result)
   })
