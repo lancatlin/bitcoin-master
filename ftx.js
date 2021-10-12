@@ -34,10 +34,22 @@ async function placeOrder(market, size) {
     type: 'market', 
     size,
   })
-  return res.data
+  return res.data.result
 }
 
-placeOrder('BTC/USD', 10)
+async function getOrder() {
+  const res = await api.get("/api/orders/history")
+  return res.data.result
+}
+
+async function getPrice(market) {
+  const res = await api.get(`/api/markets/${market}`)
+  return res.data.result.last
+}
+
+// placeOrder('BTC/USD', 10)
+// getOrder()
+getPrice('BTC/USD')
   .then((result) => {
     console.log(result)
   })
