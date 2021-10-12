@@ -6,12 +6,12 @@ const api = axios.create({
   baseURL: "https://ftx.com",
 })
 
-const hmac = createHmac("sha256", config.api_secret)
 
 api.interceptors.request.use(function (req) {
   const ts = Date.now()
   const body = `${ts}${req.method.toUpperCase()}${req.url}${req.data? JSON.stringify(req.data): ""}`
   console.log(body)
+  const hmac = createHmac("sha256", config.api_secret)
   hmac.update(body)
   req.headers["FTX-KEY"] = config.api_key
   req.headers["FTX-TS"] = String(ts)
@@ -26,7 +26,9 @@ async function balances() {
   return res.data.result
 }
 
-async function placeOrder(market, size) {
+async function placeOrder(market, amount) {
+  const price = await getPrice(market)
+  const size = amount / price
   const res = await api.post("/api/orders", {
     market,
     side: 'buy',
@@ -34,11 +36,11 @@ async function placeOrder(market, size) {
     type: 'market', 
     size,
   })
-  return res.data.result
+  return res.data.result.id
 }
 
-async function getOrder() {
-  const res = await api.get("/api/orders/history")
+async function getOrder(id) {
+  const res = await api.get(`/api/orders/${id}`)
   return res.data.result
 }
 
@@ -47,12 +49,8 @@ async function getPrice(market) {
   return res.data.result.last
 }
 
-// placeOrder('BTC/USD', 10)
-// getOrder()
-getPrice('BTC/USD')
-  .then((result) => {
-    console.log(result)
-  })
-  .catch((err) => {
-    console.log(err.toJSON())
-  })
+module.exports = {
+  getOrder,
+  placeOrder,
+  balances,
+}
