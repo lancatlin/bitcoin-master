@@ -2,7 +2,7 @@
 
 > Buy $10 Bitcoin a day, you can master the game
 
-CLI periodic payment plan
+CLI Crypto Systematic Investment Tool
 
 ## Install
 
