@@ -10,7 +10,6 @@ const api = axios.create({
 api.interceptors.request.use(function (req) {
   const ts = Date.now()
   const body = `${ts}${req.method.toUpperCase()}${req.url}${req.data? JSON.stringify(req.data): ""}`
-  console.log(body)
   const hmac = createHmac("sha256", config.api_secret)
   hmac.update(body)
   req.headers["FTX-KEY"] = config.api_key
