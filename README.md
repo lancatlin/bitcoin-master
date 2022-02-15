@@ -17,6 +17,8 @@ yarn install
 
 Currently only support [FTX](https://ftx.com) because its app sucks.
 
+Go to FTX and get one API key/secret pair. Create `config.json`, 
+
 ```
 {
   "api_key": "YOUR API KEY HERE",
